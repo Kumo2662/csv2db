@@ -1,0 +1,18 @@
+<h1>CSV INSERT</h1>
+
+<%= form_with url: csv_insert_property_index_path, local: true, html: { multipart: true } do |form| %>
+  <div>
+    <%= form.file_field :csv_file %>
+  </div>
+  <div>
+    <%= form.submit 'upload' %>
+  </div>
+<% end %>
+
+<% if flash[:notice] %>
+  <p style="color: green;"> <%= flash[:notice] %> </p>
+<% end %>
+
+<% if flash[:alert] %>
+  <p style="color: red;"> <%= flash[:alert] %> </p>
+<% end %>

@@ -11,4 +11,10 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  resources :property, only: [] do
+    collection do
+      get  :csv_insert
+      post :csv_insert
+    end
+  end
 end
