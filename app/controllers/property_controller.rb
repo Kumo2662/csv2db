@@ -2,6 +2,7 @@ require 'csv'
 
 class PropertyController < ApplicationController
   SLICE_SIZE = 1000
+  SHOW_ERRORS_LIMIT = 20
 
   BUILDING_TYPE_MAP = Csv2db::Property.building_types.map do |key, value|
     [I18n.t("enums.csv2db/property.building_type.#{key}"), value]
@@ -26,7 +27,7 @@ class PropertyController < ApplicationController
     skipped_count = 0
 
     CSV.foreach(uploaded_file.path, headers: true, encoding: 'UTF-8') do |row|
-      # 建物の種類の検証
+      # Validations for csv data
       unless BUILDING_TYPE_MAP.key?(row['建物の種類'])
         skipped_count += 1
         error_messages << "ユニークID #{row['ユニークID']} の物件データが不正です: 「#{row['建物の種類']}」は許可された建物の種類（#{BUILDING_TYPE_MAP.keys.join('、')}）ではありません"
@@ -63,9 +64,10 @@ class PropertyController < ApplicationController
     flash[:notice] = "登録・更新:#{updated_count}件、エラー:#{skipped_count}件"
 
     if error_messages.any?
-      flash[:alert_messages] = error_messages.first(20)
-      if error_messages.size > 20
-        flash[:undisplayed_errors] = "他に #{error_messages.size - 20} 件のエラーがあります"
+      # Limit the number of displayed error messages
+      flash[:alert_messages] = error_messages.first(SHOW_ERRORS_LIMIT)
+      if error_messages.size > SHOW_ERRORS_LIMIT
+        flash[:undisplayed_errors] = "他に #{error_messages.size - SHOW_ERRORS_LIMIT} 件のエラーがあります"
       end
     end
 
