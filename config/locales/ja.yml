@@ -1,0 +1,33 @@
+ja:
+  activerecord:
+    models:
+      csv2db/property: 物件
+    attributes:
+      csv2db/property:
+        id: ユニークID
+        name: 物件名
+        address: 住所
+        room_number: 部屋番号
+        rent: 賃料
+        area: 広さ
+        building_type: 建物の種類
+    errors:
+      models:
+        csv2db/property:
+          attributes:
+            name:
+              blank: "を入力してください"
+            room_number:
+              blank: "を入力してください"
+            building_type:
+              inclusion: "は有効な値ではありません"
+      messages:
+        blank: "を入力してください"
+        inclusion: "は一覧にありません"
+        invalid: "は不正な値です"
+  enums:
+    csv2db/property:
+      building_type:
+        apartment: "アパート"
+        house: "一戸建て"
+        mansion: "マンション"
