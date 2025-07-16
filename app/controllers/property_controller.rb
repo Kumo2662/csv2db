@@ -1,11 +1,11 @@
-require 'csv'
+require "csv"
 
 class PropertyController < ApplicationController
   SLICE_SIZE = 1000
   SHOW_ERRORS_LIMIT = 20
 
   BUILDING_TYPE_MAP = Csv2db::Property.building_types.map do |key, value|
-    [I18n.t("enums.csv2db/property.building_type.#{key}"), value]
+    [ I18n.t("enums.csv2db/property.building_type.#{key}"), value ]
   end.to_h
 
   def csv_insert
@@ -16,8 +16,8 @@ class PropertyController < ApplicationController
 
     uploaded_file = params[:csv_file]
     # Check if the uploaded file is a CSV file
-    unless uploaded_file.content_type == 'text/csv' || File.extname(uploaded_file.original_filename).downcase == '.csv'
-      flash[:alert] = 'CSVファイルをアップロードしてください。'
+    unless uploaded_file.content_type == "text/csv" || File.extname(uploaded_file.original_filename).downcase == ".csv"
+      flash[:alert] = "CSVファイルをアップロードしてください。"
       redirect_to csv_insert_property_index_path
       return
     end
@@ -26,22 +26,22 @@ class PropertyController < ApplicationController
     error_messages = []
     skipped_count = 0
 
-    CSV.foreach(uploaded_file.path, headers: true, encoding: 'UTF-8') do |row|
+    CSV.foreach(uploaded_file.path, headers: true, encoding: "UTF-8") do |row|
       # Validations for csv data
-      unless BUILDING_TYPE_MAP.key?(row['建物の種類'])
+      unless BUILDING_TYPE_MAP.key?(row["建物の種類"])
         skipped_count += 1
         error_messages << "ユニークID #{row['ユニークID']} の物件データが不正です: 「#{row['建物の種類']}」は許可された建物の種類（#{BUILDING_TYPE_MAP.keys.join('、')}）ではありません"
         next
       end
 
       row_data = {
-        id: row['ユニークID'],
-        name: row['物件名'],
-        address: row['住所'],
-        room_number: row['部屋番号'],
-        rent: row['賃料'],
-        area: row['広さ'],
-        building_type: BUILDING_TYPE_MAP[row['建物の種類']]
+        id: row["ユニークID"],
+        name: row["物件名"],
+        address: row["住所"],
+        room_number: row["部屋番号"],
+        rent: row["賃料"],
+        area: row["広さ"],
+        building_type: BUILDING_TYPE_MAP[row["建物の種類"]]
       }
 
       temp_property = Csv2db::Property.new(row_data)
