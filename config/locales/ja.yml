@@ -18,7 +18,7 @@ ja:
             name:
               blank: "を入力してください"
             room_number:
-              blank: "を入力してください"
+              blank: "は一戸建て以外の場合は必須です"
             building_type:
               inclusion: "は有効な値ではありません"
       messages:
