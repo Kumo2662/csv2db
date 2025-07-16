@@ -14,5 +14,20 @@
 <% end %>
 
 <% if flash[:alert] %>
-  <p style="color: red;"> <%= flash[:alert] %> </p>
+  <div style="color: red; background-color: #ffe6e6; padding: 10px; border: 1px solid #ff9999; border-radius: 4px; margin: 10px 0;">
+    <%= raw flash[:alert] %>
+  </div>
+<% end %>
+
+<% if flash[:alert_messages] %>
+  <div style="color: red; background-color: #ffe6e6; padding: 10px; border: 1px solid #ff9999; border-radius: 4px; margin: 10px 0;">
+    <% flash[:alert_messages].each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+    <% if flash[:undisplayed_errors] %>
+      <div style="font-weight: bold; margin-top: 5px;">
+        <%= flash[:undisplayed_errors] %>
+      </div>
+    <% end %>
+  </div>
 <% end %>
