@@ -137,7 +137,7 @@ RSpec.describe PropertyController, type: :controller do
       end
 
       let(:large_csv_file) do
-        file = Tempfile.new(['large_properties', '.csv'])
+        file = Tempfile.new([ 'large_properties', '.csv' ])
         file.write(large_csv_content)
         file.rewind
         fixture_file_upload(file.path, 'text/csv')
@@ -162,7 +162,7 @@ RSpec.describe PropertyController, type: :controller do
       end
 
       let(:many_errors_csv_file) do
-        file = Tempfile.new(['many_errors_properties', '.csv'])
+        file = Tempfile.new([ 'many_errors_properties', '.csv' ])
         file.write(many_errors_csv_content)
         file.rewind
         fixture_file_upload(file.path, 'text/csv')
