@@ -67,7 +67,7 @@ class PropertyController < ApplicationController
       # Limit the number of displayed error messages
       flash[:alert_messages] = error_messages.first(SHOW_ERRORS_LIMIT)
       if error_messages.size > SHOW_ERRORS_LIMIT
-        flash[:undisplayed_errors] = "他に #{error_messages.size - SHOW_ERRORS_LIMIT} 件のエラーがあります"
+        flash[:undisplayed_errors] = "他に #{error_messages.size - SHOW_ERRORS_LIMIT} 件のエラーがあります...CSVファイルを確認してください。"
       end
     end
 
