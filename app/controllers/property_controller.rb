@@ -9,26 +9,49 @@ class PropertyController < ApplicationController
         building_type_map = { 'アパート' => 0, '一戸建て' => 1, 'マンション' => 2 }
         required_count = 0
         skipped_count = 0
+        error_messages = []
         CSV.foreach(uploaded_file.path, headers: true, encoding: 'UTF-8') do |row|
-          unique_id = row['ユニークID']
-          name = row['物件名']
-          building_type = row['建物の種類']
-          room_number = row['部屋番号']
-          # 必須項目チェック
-          if unique_id.blank? || name.blank? || (room_number.blank? && building_type != '一戸建て')
+          # 建物の種類の検証
+          unless building_type_map.key?(row['建物の種類'])
             skipped_count += 1
+            error_messages << "行 #{row['ユニークID']} 的建物の種類不合法: #{row['建物の種類']}不在于允许的类型列表"
             next
           end
-          # 一戸建ての場合は部屋番号をNULL
-          room_number = nil if building_type == '一戸建て' && room_number.blank?
+
+          unique_id = row['ユニークID']
+          name = row['物件名']
+          address = row['住所']
+          room_number = row['部屋番号']
+          rent = row['賃料']
+          area = row['広さ']
+          building_type = building_type_map[row['建物の種類']]
+
+          temp_property = Csv2db::Property.new(
+            id: unique_id,
+            name: name,
+            address: address,
+            room_number: room_number,
+            rent: rent,
+            area: area,
+            building_type: building_type
+          )
+
+          puts "Processing property: #{temp_property.attributes.inspect}"
+
+          unless temp_property.valid?
+            skipped_count += 1
+            error_messages << "行 #{row['ユニークID']} 的数据不合法: #{temp_property.errors.full_messages.join(', ')}"
+            next
+          end
+
           properties << {
             id: unique_id,
             name: name,
-            address: row['住所'],
+            address: address,
             room_number: room_number,
-            rent: row['賃料'],
-            area: row['広さ'],
-            building_type: building_type_map[building_type]
+            rent: rent,
+            area: area,
+            building_type: building_type_map[row['建物の種類']]
           }
           required_count += 1
         end
@@ -40,6 +63,14 @@ class PropertyController < ApplicationController
           end
         end
         flash[:notice] = "登録・更新:#{updated_count}件、エラー:#{skipped_count}件"
+
+        if error_messages.any?
+          displayed_errors = error_messages.first(20)
+          flash[:alert_messages] = displayed_errors
+          if error_messages.size > 20
+            flash[:undisplayed_errors] = "还有 #{error_messages.size - 20} 个错误未显示"
+          end
+        end
       else
         flash[:alert] = 'only CSV files are allowed'
       end
